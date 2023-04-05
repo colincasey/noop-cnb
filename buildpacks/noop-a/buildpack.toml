@@ -1,0 +1,10 @@
+api = "0.8"
+
+[buildpack]
+id = "noop-a"
+version = "0.0.0"
+name = "(a) - Noop Buildpack"
+description = "(a) - A buildpack that does nothing"
+
+[[stacks]]
+id = "some-target-stack"

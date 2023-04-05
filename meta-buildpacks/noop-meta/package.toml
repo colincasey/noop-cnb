@@ -1,0 +1,9 @@
+[buildpack]
+uri = "."
+
+[[dependencies]]
+uri = "libcnb://noop-a"
+
+[[dependencies]]
+uri = "libcnb://noop-b"
+

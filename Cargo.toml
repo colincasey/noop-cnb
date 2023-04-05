@@ -1,0 +1,14 @@
+[workspace]
+members = [
+    "buildpacks/noop-a",
+    "buildpacks/noop-b"
+]
+
+[workspace.package]
+version = "0.0.0"
+rust-version = "1.66"
+edition = "2021"
+publish = false
+
+[workspace.dependencies]
+libcnb = "0.11"
