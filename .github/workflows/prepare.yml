@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   prepare-release:
@@ -31,7 +32,7 @@ jobs:
       - name: Prepare Release
         run: cargo run --bin prepare_release -- --bump ${{ inputs.bump }}
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         with:
           title: "Prepare release {name}@{version}"
           commit-message: "Prepare release {name}@{version}"
