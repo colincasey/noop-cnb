@@ -9,9 +9,9 @@ on:
         default: 'Patch'
         type: choice
         options:
-          - Major
-          - Minor
-          - Patch
+          - major
+          - minor
+          - patch
 
 permissions:
   contents: write
@@ -29,7 +29,7 @@ jobs:
         with:
           toolchain: stable
       - name: Prepare Release
-        run: cargo run --bin prepare_release
+        run: cargo run --bin prepare_release -- --bump ${{ inputs.bump }}
 #      - name: Create Pull Request
 #        uses: peter-evans/create-pull-request@v4
 #        with:
