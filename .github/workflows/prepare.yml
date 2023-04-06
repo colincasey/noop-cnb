@@ -35,6 +35,6 @@ jobs:
         with:
           title: "Prepare release {name}@{version}"
           commit-message: "Prepare release {name}@{version}"
-          branch: "release/{version}"
+          branch: "release/x.y.z"
           labels: "automation"
           body: "Automated Pull Request to prepare release of {name}@{version}\n\n{body}"

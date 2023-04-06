@@ -3,7 +3,6 @@ use console::Emoji;
 use glob::glob;
 use semver::{BuildMetadata, Prerelease, Version};
 use std::collections::{HashMap, HashSet};
-use std::fmt::format;
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 use tree_sitter::{Node, Parser as TreeSitterParser, Query, QueryCursor, Range};
