@@ -3,6 +3,7 @@ use console::Emoji;
 use glob::glob;
 use semver::{BuildMetadata, Prerelease, Version};
 use std::collections::{HashMap, HashSet};
+use std::fmt::format;
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 use tree_sitter::{Node, Parser as TreeSitterParser, Query, QueryCursor, Range};
@@ -10,6 +11,7 @@ use tree_sitter::{Node, Parser as TreeSitterParser, Query, QueryCursor, Range};
 static LOOKING_GLASS: Emoji<'_, '_> = Emoji("🔍 ", "");
 static CROSS_MARK: Emoji<'_, '_> = Emoji("❌ ", "");
 static WARNING: Emoji<'_, '_> = Emoji("⚠️ ", "");
+static CHECK: Emoji<'_, '_> = Emoji("✅️ ", "");
 
 const UNSPECIFIED_ERROR: i32 = 1;
 
@@ -282,6 +284,13 @@ fn update_buildpack_version_and_changelog(target_to_prepare: TargetToPrepare, ve
 }
 
 fn update_buildpack_toml(buildpack_toml: &BuildpackToml, version: &Version) {
+    eprintln!(
+        "{CHECK} Updating version {} → {}: {}",
+        buildpack_toml.current_version,
+        version,
+        buildpack_toml.path.to_string_lossy(),
+    );
+
     let new_contents = format!(
         "{}\"{}\"{}",
         &buildpack_toml.contents[..buildpack_toml.current_version_location.start_byte],

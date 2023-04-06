@@ -6,7 +6,7 @@ on:
       bump:
         description: "Bump"
         required: true
-        default: 'Patch'
+        default: 'patch'
         type: choice
         options:
           - major
@@ -30,11 +30,11 @@ jobs:
           toolchain: stable
       - name: Prepare Release
         run: cargo run --bin prepare_release -- --bump ${{ inputs.bump }}
-#      - name: Create Pull Request
-#        uses: peter-evans/create-pull-request@v4
-#        with:
-#          title: "Prepare release {name}@{version}"
-#          commit-message: "Prepare release {name}@{version}"
-#          branch: "release/{version}"
-#          labels: "automation"
-#          body: "Automated Pull Request to prepare release of {name}@{version}\n\n{body}"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: "Prepare release {name}@{version}"
+          commit-message: "Prepare release {name}@{version}"
+          branch: "release/{version}"
+          labels: "automation"
+          body: "Automated Pull Request to prepare release of {name}@{version}\n\n{body}"
