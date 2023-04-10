@@ -26,3 +26,9 @@ jobs:
         uses: colincasey/languages-github-actions/actions/prepare-release@main
         with:
           bump: ${{ inputs.bump }}
+      - name: Check output
+        run: |
+          echo "From:"
+          echo ${{ steps.prepare.from_version }}
+          echo "To:"
+          echo ${{ steps.prepare.to_version }}
