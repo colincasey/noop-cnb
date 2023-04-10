@@ -29,6 +29,6 @@ jobs:
       - name: Check output
         run: |
           echo "From:"
-          echo ${{ steps.prepare.from_version }}
+          echo ${{ steps.prepare.outputs.from_version }}
           echo "To:"
-          echo ${{ steps.prepare.to_version }}
+          echo ${{ steps.prepare.outputs.to_version }}
