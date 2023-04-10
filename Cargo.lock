@@ -165,7 +165,6 @@ dependencies = [
 name = "commands"
 version = "0.0.0"
 dependencies = [
- "cargo_metadata",
  "chrono",
  "clap",
  "console",

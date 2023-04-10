@@ -22,20 +22,7 @@ jobs:
     name: Prepare Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-      - id: install-rust-toolchain
-        name: Install Rust Toolchain
-        uses: actions-rs/toolchain@v1
+      - id: prepare
+        uses: colincasey/languages-github-actions/actions/prepare-release@main
         with:
-          toolchain: stable
-      - name: Prepare Release
-        run: cargo run --bin prepare_release -- --bump ${{ inputs.bump }}
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          title: "Prepare release {name}@{version}"
-          commit-message: "Prepare release {name}@{version}"
-          branch: "release/x.y.z"
-          labels: "automation"
-          body: "Automated Pull Request to prepare release of {name}@{version}\n\n{body}"
+          bump: ${{ inputs.bump }}

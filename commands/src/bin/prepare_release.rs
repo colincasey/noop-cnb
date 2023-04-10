@@ -54,14 +54,16 @@ fn main() {
     let targets_to_prepare = find_directories_containing_a_buildpack_and_changelog();
 
     let current_version = get_fixed_version(&targets_to_prepare);
-    // println!("{current_version}");
-
-    let next_version = calculate_next_version(current_version, args.bump);
-    // println!("{next_version}");
+    let next_version = calculate_next_version(current_version.clone(), args.bump);
 
     for target_to_prepare in targets_to_prepare {
         update_buildpack_version_and_changelog(target_to_prepare, &next_version);
     }
+
+    env::set_var(
+        "GITHUB_OUTPUT",
+        format!("from_version={current_version} to_version={next_version}"),
+    );
 }
 
 fn find_directories_containing_a_buildpack_and_changelog() -> Vec<TargetToPrepare> {
