@@ -22,6 +22,8 @@ jobs:
     name: Prepare Release
     runs-on: ubuntu-latest
     steps:
+      - id: list
+        run: ls .
       - id: prepare
         uses: colincasey/languages-github-actions/.github/actions/prepare-release@main
         with:
