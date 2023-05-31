@@ -28,7 +28,7 @@ jobs:
         run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
       - name: Package Buildpacks
         id: libcnb
-        run: echo "buildpacks='$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')'" >> $GITHUB_ENV
+        run: echo "buildpacks='$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')'" >> "$GITHUB_OUTPUT"
   publish:
     needs: [package]
     runs-on: ubuntu-latest
