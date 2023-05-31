@@ -1,4 +1,4 @@
-name: Prepare Buildpack
+name: Prepare Buildpack (Shared Action)
 
 on:
   workflow_dispatch:
@@ -24,15 +24,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - id: list
-        run: ls .
-      - id: prepare
+      - name: Prepare
+        id: prepare
         uses: colincasey/languages-github-actions/.github/actions/prepare-release@main
         with:
           bump: ${{ inputs.bump }}
-      - name: Check output
-        run: |
-          echo "From:"
-          echo ${{ steps.prepare.outputs.from_version }}
-          echo "To:"
-          echo ${{ steps.prepare.outputs.to_version }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: Prepare release v${{ steps.prepare.outputs.to_version }}
+          commit-message: Prepare release v${{ steps.prepare.outputs.to_version }}
+          branch: release/v${{ steps.prepare.outputs.to_version }}
+          body: ${{ steps.prepare.outputs.changelog_summary }}
+          labels: "automation"
