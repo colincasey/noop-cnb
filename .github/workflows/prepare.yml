@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: prepare
-        uses: colincasey/languages-github-actions/actions/prepare-release@main
+        uses: colincasey/languages-github-actions/.github/actions/prepare-release@main
         with:
           bump: ${{ inputs.bump }}
       - name: Check output
