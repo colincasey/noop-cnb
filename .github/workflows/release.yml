@@ -31,8 +31,8 @@ jobs:
         run: echo "buildpacks=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> $GITHUB_ENV
       - name: Check output
         run: |
-          echo ${{ steps.package-all.outputs.buildpacks }}
-          echo ${{ toJSON(steps.package-all.outputs.buildpacks) }}
+          echo "${{ toJSON(steps.package-all.outputs) }}"
+          echo "${{ toJSON(['a', 'b', 'c']) }}"
   publish:
     needs: [package]
     runs-on: ubuntu-latest
@@ -41,9 +41,7 @@ jobs:
 #        buildpack: ${{ fromJSON(needs.package.outputs.buildpacks) }}
     steps:
       - name: Check job output
-        run: |
-          echo ${{ needs.package.outputs.buildpacks }}
-          echo ${{ toJSON(needs.package.outputs.buildpacks) }}
+        run: echo "${{ toJSON(needs.package.outputs) }}"
 #      - name: Read buildpack metadata (${{ matrix.buildpack }})
 #        run: |
 #          echo "buildpack_id=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.id)" >> $GITHUB_ENV
