@@ -7,7 +7,7 @@ jobs:
   package:
     runs-on: ubuntu-latest
     outputs:
-      buildpacks: ${{ steps.libcnb.outputs.buildpacks }}
+      buildpacks: ${{ steps.libcnb-package.outputs.buildpacks }}
     steps:
       # Setup
       - name: Checkout
@@ -27,18 +27,16 @@ jobs:
       - name: Install libcnb-cargo
         run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
       - name: Package Buildpacks
-        id: libcnb
+        id: libcnb-package
         run: echo "buildpacks='$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')'" >> "$GITHUB_OUTPUT"
   publish:
     needs: [package]
     runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        buildpack: ${{ fromJSON(needs.package.outputs.buildpacks) }}
+    strategy:
+      matrix:
+        buildpack: ${{ fromJSON(needs.libcnb-package.outputs.buildpacks) }}
     steps:
-      - name: Check job output
-        run: echo "${{ toJSON(needs.package.outputs) }}"
-#      - name: Read buildpack metadata (${{ matrix.buildpack }})
-#        run: |
-#          echo "buildpack_id=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.id)" >> $GITHUB_ENV
-#          echo "buildpack_version=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.version)" >> $GITHUB_ENV
+      - name: Read buildpack metadata (${{ matrix.buildpack }})
+        run: |
+          echo "buildpack_id=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.id)" >> $GITHUB_ENV
+          echo "buildpack_version=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.version)" >> $GITHUB_ENV
