@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        buildpack: ${{ fromJSON(needs.libcnb-package.outputs.buildpacks) }}
+        buildpack: ${{ needs.libcnb-package.outputs.buildpacks }}
     steps:
       - name: Install yj and crane
         uses: buildpacks/github-actions/setup-tools@v5.2.0
