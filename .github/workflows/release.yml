@@ -32,7 +32,7 @@ jobs:
       - name: Check output
         run: |
           echo "${{ toJSON(steps.package-all.outputs) }}"
-          echo "${{ toJSON('['a', 'b', 'c']') }}"
+          echo "${{ toJSON('["a", "b", "c"]') }}"
   publish:
     needs: [package]
     runs-on: ubuntu-latest
