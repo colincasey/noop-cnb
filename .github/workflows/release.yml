@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check
-        run: echo "${{ needs.libcnb-package.outputs.buildpacks }}"
+        run: echo "${{ needs.package.outputs.buildpacks }}"
 #    strategy:
 #      matrix:
 #        buildpack: ${{ needs.libcnb-package.outputs.buildpacks }}
