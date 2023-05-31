@@ -1,7 +1,9 @@
 use libcnb::build::{BuildContext, BuildResult, BuildResultBuilder};
-use libcnb::{Buildpack, buildpack_main};
 use libcnb::detect::{DetectContext, DetectResult, DetectResultBuilder};
 use libcnb::generic::{GenericError, GenericMetadata, GenericPlatform};
+use libcnb::{buildpack_main, Buildpack};
+
+struct NoopBuildpackB;
 
 impl Buildpack for NoopBuildpackB {
     type Platform = GenericPlatform;
@@ -16,6 +18,5 @@ impl Buildpack for NoopBuildpackB {
         BuildResultBuilder::new().build()
     }
 }
-
 
 buildpack_main!(NoopBuildpackB);

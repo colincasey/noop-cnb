@@ -2,8 +2,8 @@
 uri = "."
 
 [[dependencies]]
-uri = "libcnb://noop-a"
+uri = "libcnb:noop-a"
 
 [[dependencies]]
-uri = "libcnb://noop-b"
+uri = "libcnb:noop-b"
 
