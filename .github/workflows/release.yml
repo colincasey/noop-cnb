@@ -29,6 +29,10 @@ jobs:
       - name: Package Buildpacks
         id: package-all
         run: cargo libcnb package --release | sed 's/\(.*\)/"\1"/g' | tr '\n' ',' |  sed 's/\(.*\),$/buildpacks=[\1]/g' >> $GITHUB_ENV
+      - name: Check output
+        run: |
+          echo ${{ steps.package-all.outputs.buildpacks }}
+          echo ${{ toJSON(steps.package-all.outputs.buildpacks) }}
   publish:
     needs: [package]
     runs-on: ubuntu-latest
