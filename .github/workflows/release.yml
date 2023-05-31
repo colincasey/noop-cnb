@@ -28,11 +28,12 @@ jobs:
         run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
       - name: Package Buildpacks
         id: package-all
-        run: cargo libcnb package --release | sed 's/\(.*\)/"\1"/g' | tr '\n' ',' |  sed 's/\(.*\),$/buildpacks=[\1]/g' >> $GITHUB_ENV
-      - name: Check output
         run: |
-          echo ${{ steps.package-all.outputs.buildpacks }}
-          echo ${{ toJSON(steps.package-all.outputs.buildpacks) }}
+          OUTPUT=$(cargo libcnb package --release) 
+          echo $OUTPUT
+          JSON=$(echo $OUTPUT | sed 's/\(.*\)/"\1"/g' | tr '\n' ',' |  sed 's/\(.*\),$/buildpacks=[\1]/g')
+          echo $JSON
+          echo $JSON >> $GITHUB_ENV
   publish:
     needs: [package]
     runs-on: ubuntu-latest
