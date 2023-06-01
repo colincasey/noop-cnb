@@ -7,13 +7,19 @@ jobs:
   detect:
     runs-on: ubuntu-latest
     outputs:
-      buildpacks: ${{ steps.list-buildpacks.outputs.buildpacks }}
+      buildpacks: ${{ steps.generate-buildpack-matrix.outputs.buildpacks }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Generate Buildpack Matrix
         id: generate-buildpack-matrix
         uses: colincasey/languages-github-actions/.github/actions/generate-buildpack-matrix@main
+  check:
+    needs: [detect]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: echo "${{ needs.detect.outputs.buildpacks }}"
   package:
     needs: [detect]
     runs-on: ubuntu-latest
