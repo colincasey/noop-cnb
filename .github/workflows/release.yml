@@ -11,26 +11,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: List Buildpacks
-        id: list-buildpacks
-        uses: colincasey/languages-github-actions/.github/actions/list-buildpacks@main
+      - name: Generate Buildpack Matrix
+        id: generate-buildpack-matrix
+        uses: colincasey/languages-github-actions/.github/actions/generate-buildpack-matrix@main
   package:
     needs: [detect]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        buildpack: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+        include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+    name: Package ${{ matrix.id }}
     steps:
-      - name: Check
-        run: echo "${{ matrix.buildpack }}"
-
-#    runs-on: ubuntu-latest
-#    outputs:
-#      buildpacks: ${{ steps.libcnb-package.outputs.buildpacks }}
-#    steps:
-#      # Setup
-#      - name: Checkout
-#        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 #      - name: Install musl-tools
 #        run: sudo apt-get install musl-tools --no-install-recommends
 #      - name: Update Rust toolchain
@@ -43,19 +36,9 @@ jobs:
 #        uses: buildpacks/github-actions/setup-pack@v5.2.0
 #      - name: Install libcnb-cargo
 #        run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
-#      - name: Package Buildpacks
+#      - name: Package Buildpack
 #        id: libcnb-package
-#        run: echo "buildpacks=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> "$GITHUB_OUTPUT"
-#  publish:
-#    needs: [package]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Check
-#        run: echo "${{ needs.package.outputs.buildpacks }}"
-#    strategy:
-#      matrix:
-#        buildpack: ${{ needs.libcnb-package.outputs.buildpacks }}
-#    steps:
+#        run: echo "package=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> "$GITHUB_OUTPUT"
 #      - name: Install yj and crane
 #        uses: buildpacks/github-actions/setup-tools@v5.2.0
 #      - name: Read buildpack metadata (${{ matrix.buildpack }})
