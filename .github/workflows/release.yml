@@ -4,35 +4,51 @@ on:
   workflow_dispatch:
 
 jobs:
-  package:
+  detect:
     runs-on: ubuntu-latest
     outputs:
-      buildpacks: ${{ steps.libcnb-package.outputs.buildpacks }}
+      buildpacks: ${{ steps.list-buildpacks.outputs.buildpacks }}
     steps:
-      # Setup
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install musl-tools
-        run: sudo apt-get install musl-tools --no-install-recommends
-      - name: Update Rust toolchain
-        run: rustup update
-      - name: Install Rust linux-musl target
-        run: rustup target add x86_64-unknown-linux-musl
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-      - name: Install Pack CLI
-        uses: buildpacks/github-actions/setup-pack@v5.2.0
-      - name: Install libcnb-cargo
-        run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
-      - name: Package Buildpacks
-        id: libcnb-package
-        run: echo "buildpacks=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> "$GITHUB_OUTPUT"
-  publish:
-    needs: [package]
+      - name: List Buildpacks
+        id: list-buildpacks
+        uses: colincasey/languages-github-actions/.github/actions/list-buildpacks@main
+  package:
+    needs: [detect]
     runs-on: ubuntu-latest
     steps:
       - name: Check
-        run: echo "${{ needs.package.outputs.buildpacks }}"
+        run: echo "${{ needs.detect.outputs.buildpacks }}"
+
+#    runs-on: ubuntu-latest
+#    outputs:
+#      buildpacks: ${{ steps.libcnb-package.outputs.buildpacks }}
+#    steps:
+#      # Setup
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Install musl-tools
+#        run: sudo apt-get install musl-tools --no-install-recommends
+#      - name: Update Rust toolchain
+#        run: rustup update
+#      - name: Install Rust linux-musl target
+#        run: rustup target add x86_64-unknown-linux-musl
+#      - name: Rust Cache
+#        uses: Swatinem/rust-cache@v2
+#      - name: Install Pack CLI
+#        uses: buildpacks/github-actions/setup-pack@v5.2.0
+#      - name: Install libcnb-cargo
+#        run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
+#      - name: Package Buildpacks
+#        id: libcnb-package
+#        run: echo "buildpacks=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> "$GITHUB_OUTPUT"
+#  publish:
+#    needs: [package]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check
+#        run: echo "${{ needs.package.outputs.buildpacks }}"
 #    strategy:
 #      matrix:
 #        buildpack: ${{ needs.libcnb-package.outputs.buildpacks }}
