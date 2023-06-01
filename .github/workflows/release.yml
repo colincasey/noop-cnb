@@ -41,13 +41,13 @@ jobs:
       - name: Package Buildpack
         id: libcnb-package
         working-directory: ${{ matrix.path }}
-        run: echo "package_dir=$(cargo libcnb package --release | jq -Rsc '. / "\n" - [""]')" >> "$GITHUB_OUTPUT"
+        run: echo "package_dir=$(cargo libcnb package --release)" >> "$GITHUB_OUTPUT"
       - name: Read buildpack metadata (${{ matrix.buildpack }})
         id: metadata
         working-directory: ${{ matrix.path }}
         run: |
-          echo "buildpack_id=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
-          echo "buildpack_version=$(yj -t < ${{ matrix.buildpack }}/buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
+          echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
+          echo "buildpack_version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
       - name: Check
         run: |
           echo "Buildpack ID: ${{ steps.metadata.outputs.buildpack_id }}"
