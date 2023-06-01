@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        buildpack: ${{ fromJSON(needs.libcnb-package.outputs.buildpacks) }}
+        buildpack: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
       - name: Check
         run: echo "${{ matrix.buildpack }}"
