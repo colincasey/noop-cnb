@@ -103,7 +103,7 @@ jobs:
           buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
           buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
           buildpack-uri: ${{ steps.publishing.outputs.url }}
-          builders: "builder-22, builder-20, builder-classic-22"
+          builders: "builder-22,builder-20,builder-classic-22"
       - name: Check
         run: git status
         working-directory: ./builder
