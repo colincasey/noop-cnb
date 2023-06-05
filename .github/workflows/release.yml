@@ -56,13 +56,10 @@ jobs:
           echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
           echo "buildpack_version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
           echo "docker_repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> "$GITHUB_OUTPUT"
-          
-          cat $GITHUB_OUTPUT
       - name: Read publish url
         id: publishing
         run: |
           echo "url=${{ steps.metadata.outputs.docker_repository }}:${{ steps.metadata.outputs.buildpack_version }}" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
       - name: Check version is unique on Docker Hub
         run: |
           if docker manifest inspect "${{ steps.publishing.outputs.url }}" > /dev/null; then
@@ -99,14 +96,14 @@ jobs:
         with:
           repository: heroku/builder
           path: ./builder
-#      - name: Update Builder
-#        run: colincasey/languages-github-actions/.github/actions/update-builder@main
-#        working-directory: ${{ env.GITHUB_WORKSPACE }}/builder
-#        with:
-#          buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
-#          buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
-#          buildpack-uri: ${{ steps.metadata.outputs.publish_url }}
-#          builders: "builder-22, builder-20, builder-classic-22"
+      - name: Update Builder
+        run: colincasey/languages-github-actions/.github/actions/update-builder@main
+        working-directory: ./builder
+        with:
+          buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
+          buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
+          buildpack-uri: ${{ steps.publishing.outputs.url }}
+          builders: "builder-22, builder-20, builder-classic-22"
       - name: Check
         run: git status
         working-directory: ./builder
