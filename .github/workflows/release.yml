@@ -55,8 +55,8 @@ jobs:
         run: |
           echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
           
-#          export buildpack_version="$(yj -t < buildpack.toml | jq -r .buildpack.version)"
-#          echo "${buildpack_version}" >> "$GITHUB_OUTPUT"
+          export buildpack_version="$(yj -t < buildpack.toml | jq -r .buildpack.version)"
+          echo "${buildpack_version}" >> "$GITHUB_OUTPUT"
 #
 #          export docker_repository="$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)"
 #          echo "${docker_repository}" >> "$GITHUB_OUTPUT"
@@ -102,9 +102,9 @@ jobs:
 #        run: colincasey/languages-github-actions/.github/actions/update-builder@main
 #        working-directory: ${{ env.GITHUB_WORKSPACE }}/builder
 #        with:
-#          buildpack_id: ${{ steps.metadata.outputs.buildpack_id }}
-#          buildpack_version: ${{ steps.metadata.outputs.buildpack_version }}
-#          buildpack_uri: ${{ steps.metadata.outputs.publish_url }}
+#          buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
+#          buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
+#          buildpack-uri: ${{ steps.metadata.outputs.publish_url }}
 #          builders: "builder-22, builder-20, builder-classic-22"
       - name: Check
         run: git status
