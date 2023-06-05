@@ -54,14 +54,11 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: |
           echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
-          
-          export buildpack_version="$(yj -t < buildpack.toml | jq -r .buildpack.version)"
-          echo "${buildpack_version}" >> "$GITHUB_OUTPUT"
-#
-#          export docker_repository="$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)"
-#          echo "${docker_repository}" >> "$GITHUB_OUTPUT"
-#
-#          echo "publish_url=${docker_repository}:${buildpack_version}" >> "$GITHUB_OUTPUT"
+          echo "buildpack_version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
+          echo "docker_repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> "$GITHUB_OUTPUT"
+      - name: Read publish url
+        id: publishing
+        run: echo "${{ steps.metadata.output.docker_repository }}:${{ steps.metadata.output.buildpack_version }}"
       - name: Check version is unique on Docker Hub
         run: |
           if docker manifest inspect "${{ steps.metadata.outputs.publish_url }}" > /dev/null; then
