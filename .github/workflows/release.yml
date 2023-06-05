@@ -100,7 +100,7 @@ jobs:
         uses: colincasey/languages-github-actions/.github/actions/update-builder@main
         with:
           path: ./builder
-          buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
+          buildpack-id: heroku/nodejs
           buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
           buildpack-uri: ${{ steps.publishing.outputs.url }}
           builders: "builder-22,buildpacks-20,builder-classic-22"
