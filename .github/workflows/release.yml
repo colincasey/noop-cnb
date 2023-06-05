@@ -56,21 +56,25 @@ jobs:
           echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
           echo "buildpack_version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
           echo "docker_repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> "$GITHUB_OUTPUT"
+          
+          cat $GITHUB_OUTPUT
       - name: Read publish url
         id: publishing
-        run: echo "${{ steps.metadata.output.docker_repository }}:${{ steps.metadata.output.buildpack_version }}"
+        run: |
+          echo "url=${{ steps.metadata.output.docker_repository }}:${{ steps.metadata.output.buildpack_version }}" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
       - name: Check version is unique on Docker Hub
         run: |
-          if docker manifest inspect "${{ steps.metadata.outputs.publish_url }}" > /dev/null; then
-            echo "Duplicate version found on Docker Hub ${{ steps.metadata.outputs.publish_url }}"
+          if docker manifest inspect "${{ steps.publishing.outputs.url }}" > /dev/null; then
+            echo "Duplicate version found on Docker Hub ${{ steps.publishing.outputs.url }}"
             exit 1
           fi
       - name: Publish the buildpack to Docker Hub
-        run: echo 'pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.metadata.outputs.publish_url }}"'
-#        run: pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.metadata.outputs.publish_url }}"
+        run: echo 'pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.publishing.outputs.url }}"'
+#        run: pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.publishing.outputs.url }}"
 #      - name: Calculate the buildpack image digest
 #        id: digest
-#        run: echo "buildpack_digest=$(crane digest ${{ steps.metadata.outputs.publish_url }})" >> "$GITHUB_OUTPUT"
+#        run: echo "buildpack_digest=$(crane digest ${{ steps.publishing.outputs.url }})" >> "$GITHUB_OUTPUT"
 #      - name: Register the new version with the CNB Buildpack Registry
 #        uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.0.1
 #        with:
