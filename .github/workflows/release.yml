@@ -61,7 +61,7 @@ jobs:
       - name: Read publish url
         id: publishing
         run: |
-          echo "url=${{ steps.metadata.output.docker_repository }}:${{ steps.metadata.output.buildpack_version }}" >> $GITHUB_OUTPUT
+          echo "url=${{ steps.metadata.outputs.docker_repository }}:${{ steps.metadata.outputs.buildpack_version }}" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
       - name: Check version is unique on Docker Hub
         run: |
