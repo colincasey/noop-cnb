@@ -22,6 +22,7 @@ jobs:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     name: Package ${{ matrix.id }}
     steps:
+      # Setup
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install musl-tools
@@ -38,18 +39,66 @@ jobs:
         uses: buildpacks/github-actions/setup-tools@v5.2.0
       - name: Install libcnb-cargo
         run: cargo install --git https://github.com/heroku/libcnb.rs --branch ccasey-malax-pairing libcnb-cargo
+
+      # Package
       - name: Package Buildpack
         id: libcnb-package
         working-directory: ${{ matrix.path }}
         run: echo "package_dir=$(cargo libcnb package --release)" >> "$GITHUB_OUTPUT"
-      - name: Read buildpack metadata (${{ matrix.buildpack }})
+
+      # Publish
+      - name: Read buildpack metadata
         id: metadata
         working-directory: ${{ matrix.path }}
         run: |
           echo "buildpack_id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> "$GITHUB_OUTPUT"
           echo "buildpack_version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> "$GITHUB_OUTPUT"
-      - name: Check
+          echo "docker_repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> "$GITHUB_OUTPUT"
+          echo "publish_url=${docker_repository}:${buildpack_version}" >> "$GITHUB_OUTPUT"
+      - name: Check version is unique on Docker Hub
         run: |
-          echo "Buildpack ID: ${{ steps.metadata.outputs.buildpack_id }}"
-          echo "Buildpack Version: ${{ steps.metadata.outputs.buildpack_version }}"
-          echo "Package Dir: ${{ steps.libcnb-package.outputs.package_dir }}"
+          if docker manifest inspect "${{ steps.metadata.outputs.publish_url }}" > /dev/null; then
+            echo "Duplicate version found on Docker Hub ${{ steps.metadata.outputs.publish_url }}"
+            exit 1
+          fi
+      - name: Publish the buildpack to Docker Hub
+        run: echo 'pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.metadata.outputs.publish_url }}"'
+#        run: pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.metadata.outputs.publish_url }}"
+#      - name: Calculate the buildpack image digest
+#        id: digest
+#        run: echo "buildpack_digest=$(crane digest ${{ steps.metadata.outputs.publish_url }})" >> "$GITHUB_OUTPUT"
+#      - name: Register the new version with the CNB Buildpack Registry
+#        uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.0.1
+#        with:
+#          token: ${{ secrets.CNB_REGISTRY_RELEASE_BOT_GITHUB_TOKEN }}
+#          id: ${{ steps.metadata.outputs.buildpack_id }}
+#          version: ${{ steps.metadata.outputs.buildpack_version }}
+#          address: ${{ env.BUILDPACK_DOCKER_REPO }}@${{ steps.digest.outputs.buildpack_digest }}
+#      - name: Create GitHub release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: v${{ steps.metadata.outputs.buildpack_version }}
+#          release_name: v${{ steps.metadata.outputs.buildpack_version }}
+#          body: |
+#            See the [CHANGELOG](./CHANGELOG.md) for details.
+#          draft: false
+
+      # Create Builder PR
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: heroku/builder
+          path: builder
+      - name: Update Builder
+        run: colincasey/languages-github-actions/.github/actions/update-builder@main
+        working-directory: ${{ env.GITHUB_WORKSPACE }}/builder
+        with:
+          buildpack_id: ${{ steps.metadata.outputs.buildpack_id }}
+          buildpack_version: ${{ steps.metadata.outputs.buildpack_version }}
+          buildpack_uri: ${{ steps.metadata.outputs.publish_url }}
+          builders: builder-22, builder-20, builder-classic-22
+      - name: Check
+        run: git status
+        working-directory: ${{ env.GITHUB_WORKSPACE }}/builder
