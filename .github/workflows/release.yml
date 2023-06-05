@@ -97,9 +97,9 @@ jobs:
           repository: heroku/builder
           path: ./builder
       - name: Update Builder
-        run: colincasey/languages-github-actions/.github/actions/update-builder@main
-        working-directory: ./builder
+        uses: colincasey/languages-github-actions/.github/actions/update-builder@main
         with:
+          path: ./builder
           buildpack-id: ${{ steps.metadata.outputs.buildpack_id }}
           buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
           buildpack-uri: ${{ steps.publishing.outputs.url }}
