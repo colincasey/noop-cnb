@@ -44,9 +44,9 @@ jobs:
       - name: Package Buildpack
         id: libcnb-package
         working-directory: ${{ matrix.path }}
-        run: echo "package_dir=$(cargo libcnb package --release)" >> "$GITHUB_OUTPUT"
+        run: cargo libcnb package --release
       - name: Tar Packaged Buildpack
-        run: tar -czvf ${{ matrix.id }}.tar ${{ steps.libcnb-package.outputs.package_dir }}
+        run: tar -cvf ${{ matrix.id }}.tar ./target/buildpack/release
       - name: Upload Buildpack Artifact
         uses: actions/upload-artifact@v3
         with:
