@@ -7,7 +7,7 @@ on:
 
 jobs:
   detect:
-    name: Detect Buildpacks
+    name: Detecting Buildpacks
     runs-on: ubuntu-latest
     outputs:
       buildpacks: ${{ steps.generate-buildpack-matrix.outputs.buildpacks }}
@@ -57,12 +57,12 @@ jobs:
           echo "path=$(basename ${{ steps.libcnb-package.outputs.package_dir }})" >> $METADATA
           cat $METADATA
       - name: Tar Packaged Buildpack
-        run: tar -cvfz ${{ matrix.id }}.tar.gz -C ./target/buildpack/release .
+        run: tar -cvf ${{ matrix.id }}.tar -C ./target/buildpack/release .
       - name: Upload Buildpack Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.id }}
-          path: ${{ matrix.id }}.tar.gz
+          path: ${{ matrix.id }}.tar
 
   publish-docker:
     name: Publish / Docker / ${{ matrix.id }}
@@ -76,7 +76,7 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar.gz
+        run: tar -xvf ${{ matrix.id }}.tar
       - name: Load Metadata
         id: metadata
         run: cat metadata >> $GITHUB_OUTPUT
@@ -102,7 +102,7 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar.gz
+        run: tar -xvf ${{ matrix.id }}.tar
 
   publish-cnb:
     name: Publish / CNB Registry / ${{ matrix.id }}
@@ -116,7 +116,7 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar.gz
+        run: tar -xvf ${{ matrix.id }}.tar
 
   update-builder:
     name: Update Builder / ${{ matrix.id }}
@@ -130,7 +130,7 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar.gz
+        run: tar -xvf ${{ matrix.id }}.tar
       - name: Checkout
         uses: actions/checkout@v3
         with:
