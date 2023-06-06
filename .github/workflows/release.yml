@@ -53,7 +53,20 @@ jobs:
           name: ${{ matrix.id }}
           path: ${{ matrix.id }}.tar
 
-#      # Publish
+  publish-docker:
+    needs: [ detect, package ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.id }}
+      - name: Untar Packaged Buildpack
+        run: tar -xvf ${{ matrix.id }}.tar
+      - name: Display
+        run: ls -R
 #      - name: Read buildpack metadata
 #        id: metadata
 #        working-directory: ${{ matrix.path }}
