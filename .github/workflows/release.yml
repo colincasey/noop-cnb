@@ -54,6 +54,7 @@ jobs:
           path: ${{ matrix.id }}.tar
 
   publish-docker:
+    name: Docker Publish ${{ matrix.id }}
     needs: [ detect, package ]
     runs-on: ubuntu-latest
     strategy:
@@ -67,6 +68,66 @@ jobs:
         run: tar -xvf ${{ matrix.id }}.tar
       - name: Display
         run: ls -R
+
+  publish-github:
+    name: GitHub Publish ${{ matrix.id }}
+    needs: [ detect, package ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.id }}
+      - name: Untar Packaged Buildpack
+        run: tar -xvf ${{ matrix.id }}.tar
+
+  publish-cnb:
+    name: CNB Registry Publish ${{ matrix.id }}
+    needs: [ detect, publish-docker ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.id }}
+      - name: Untar Packaged Buildpack
+        run: tar -xvf ${{ matrix.id }}.tar
+
+  update-builder:
+    name: Update Builder ${{ matrix.builder }} - ${{ matrix.id }}
+    needs: [ detect, publish-docker ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        builder: [builder-22, buildpacks-20, builder-classic-22]
+        include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.id }}
+      - name: Untar Packaged Buildpack
+        run: tar -xvf ${{ matrix.id }}.tar
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: heroku/builder
+          path: ./builder
+      - name: Update Builder
+        uses: colincasey/languages-github-actions/.github/actions/update-builder@main
+        with:
+          path: ./builder
+          buildpack-id: heroku/nodejs
+          buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
+          buildpack-uri: ${{ steps.publishing.outputs.url }}
+          builders: ${{ matrix.builder }}
+      - name: Check
+        run: git status
+        working-directory: ./builder
+
 #      - name: Read buildpack metadata
 #        id: metadata
 #        working-directory: ${{ matrix.path }}
