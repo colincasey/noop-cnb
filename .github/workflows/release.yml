@@ -81,7 +81,7 @@ jobs:
       - name: Restore Docker images from the cache
         uses: actions/cache/restore@v3
         with:
-          key: ${{ github.run_id}}-${{ matrix.id }}
+          key: ${{ github.run_id }}-${{ matrix.id }}
           path: |
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
@@ -115,9 +115,10 @@ jobs:
       - name: Restore Docker images from the cache
         uses: actions/cache/restore@v3
         with:
-          key: ${{ github.run_id}}-${{ matrix.id }}
+          key: ${{ github.run_id }}-${{ matrix.id }}
           path: |
             ${{ matrix.id }}.cnb
+            ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
       - name: Load Buildpack Variables
         id: buildpack
@@ -144,8 +145,10 @@ jobs:
       - name: Restore Docker images from the cache
         uses: actions/cache/restore@v3
         with:
-          key: ${{ github.run_id}}-${{ matrix.id }}
+          key: ${{ github.run_id }}-${{ matrix.id }}
           path: |
+            ${{ matrix.id }}.cnb
+            ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
       - name: Load Buildpack Variables
         id: buildpack
@@ -174,8 +177,10 @@ jobs:
       - name: Restore Docker images from the cache
         uses: actions/cache/restore@v3
         with:
-          key: ${{ github.run_id}}-${{ matrix.id }}
+          key: ${{ github.run_id }}-${{ matrix.id }}
           path: |
+            ${{ matrix.id }}.cnb
+            ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
       - name: Load Buildpack Variables
         id: buildpack
