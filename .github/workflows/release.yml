@@ -49,10 +49,10 @@ jobs:
         run: echo "dir=$(cargo libcnb package --release)" >> $GITHUB_OUTPUT
       - name: Create CNB File
         working-directory: ${{ steps.libcnb-package.outputs.dir }}
-        run: pack buildpack package ${{ matrix.id }}.cnb --path ${{ steps.libcnb-package.outputs.dir }} --config package.toml --format file -v
+        run: pack buildpack package ${{ matrix.id }}.cnb --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --format file -v
       - name: Create Docker Image
         working-directory: ${{ steps.libcnb-package.outputs.dir }}
-        run: pack buildpack package ${{ matrix.id }} --path ${{ steps.libcnb-package.outputs.dir }} --config package.toml -v
+        run: pack buildpack package ${{ matrix.id }} --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --config package.toml -v
       - name: Save Docker Image
         run: docker save ${{ matrix.id }} | zstd -T0 --long=31 -o ${{ matrix.id }}.tar.zst
       - name: Save Buildpack Variables
@@ -100,8 +100,8 @@ jobs:
 #        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
 #      - name: Tag buildpack and push to registries
 #        run: |
-#          docker tag ${{ matrix.id }} $tag
-#          docker push $tag
+#          docker tag ${{ matrix.id }} ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}
+#          docker push ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}
 
   publish-github:
     name: Publish / GitHub / ${{ matrix.id }}
