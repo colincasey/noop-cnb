@@ -64,7 +64,7 @@ jobs:
       - name: Cache Outputs
         uses: actions/cache/save@v3
         with:
-          key: ${{ github.run_id}}-${{ matrix.id }}
+          key: ${{ github.run_id }}-${{ matrix.id }}
           path: |
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
@@ -83,6 +83,7 @@ jobs:
         with:
           key: ${{ github.run_id}}-${{ matrix.id }}
           path: |
+            ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
       - name: Load Buildpack Variables
