@@ -7,6 +7,7 @@ on:
 
 jobs:
   detect:
+    name: Detect Buildpacks
     runs-on: ubuntu-latest
     outputs:
       buildpacks: ${{ steps.generate-buildpack-matrix.outputs.buildpacks }}
@@ -16,13 +17,14 @@ jobs:
       - name: Generate Buildpack Matrix
         id: generate-buildpack-matrix
         uses: colincasey/languages-github-actions/.github/actions/generate-buildpack-matrix@main
+
   package:
     needs: [detect]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
-    name: Package ${{ matrix.id }}
+    name: Package / ${{ matrix.id }}
     steps:
       # Package
       - name: Checkout
@@ -44,17 +46,27 @@ jobs:
       - name: Package Buildpack
         id: libcnb-package
         working-directory: ${{ matrix.path }}
-        run: cargo libcnb package --release
+        run: echo "package_dir=$(cargo libcnb package --release)" >> $GITHUB_OUTPUT
+      - name: Write buildpack metadata
+        id: metadata
+        working-directory: ${{ matrix.path }}
+        run: |
+          export METADATA=./target/buildpack/release/metadata
+          echo "id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> $METADATA
+          echo "version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> $METADATA
+          echo "repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> $METADATA
+          echo "path=$(basename ${{ steps.libcnb-package.outputs.package_dir }})" >> $METADATA
+          cat $METADATA
       - name: Tar Packaged Buildpack
-        run: tar -cvf ${{ matrix.id }}.tar ./target/buildpack/release
+        run: tar -cvfz ${{ matrix.id }}.tar.gz -C ./target/buildpack/release .
       - name: Upload Buildpack Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.id }}
-          path: ${{ matrix.id }}.tar
+          path: ${{ matrix.id }}.tar.gz
 
   publish-docker:
-    name: Docker Publish ${{ matrix.id }}
+    name: Publish / Docker / ${{ matrix.id }}
     needs: [ detect, package ]
     runs-on: ubuntu-latest
     strategy:
@@ -65,12 +77,22 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar
-      - name: Display
-        run: ls -R
+        run: tar -xvf ${{ matrix.id }}.tar.gz
+      - name: Load Metadata
+        id: metadata
+        run: cat metadata >> $GITHUB_OUTPUT
+      - name: Check version is unique on Docker Hub
+        run: |
+          if docker manifest inspect "${{ steps.metadata.outputs.repository }}:${{ steps.metadata.outputs.version }}" > /dev/null; then
+            echo "Duplicate version found on Docker Hub ${{ steps.metadata.outputs.repository }}:${{ steps.metadata.outputs.version }}"
+            exit 1
+          fi
+      - name: Publish the buildpack to Docker Hub
+        run: echo 'pack buildpack package --path "${{ steps.metadata.outputs.path }}" --publish "${{ steps.metadata.outputs.repository }}:${{ steps.metadata.outputs.version }}"'
+#        run: pack buildpack package --path "${{ steps.libcnb-package.outputs.package_dir }}" --publish "${{ steps.publishing.outputs.url }}"
 
   publish-github:
-    name: GitHub Publish ${{ matrix.id }}
+    name: Publish / GitHub / ${{ matrix.id }}
     needs: [ detect, package ]
     runs-on: ubuntu-latest
     strategy:
@@ -81,10 +103,10 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar
+        run: tar -xvf ${{ matrix.id }}.tar.gz
 
   publish-cnb:
-    name: CNB Registry Publish ${{ matrix.id }}
+    name: Publish / CNB Registry / ${{ matrix.id }}
     needs: [ detect, publish-docker ]
     runs-on: ubuntu-latest
     strategy:
@@ -95,22 +117,21 @@ jobs:
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar
+        run: tar -xvf ${{ matrix.id }}.tar.gz
 
   update-builder:
-    name: Update Builder ${{ matrix.builder }} - ${{ matrix.id }}
+    name: Update Builder / ${{ matrix.id }}
     needs: [ detect, publish-docker ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        builder: [builder-22, buildpacks-20, builder-classic-22]
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.id }}
       - name: Untar Packaged Buildpack
-        run: tar -xvf ${{ matrix.id }}.tar
+        run: tar -xvf ${{ matrix.id }}.tar.gz
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -123,7 +144,7 @@ jobs:
           buildpack-id: heroku/nodejs
           buildpack-version: ${{ steps.metadata.outputs.buildpack_version }}
           buildpack-uri: ${{ steps.publishing.outputs.url }}
-          builders: ${{ matrix.builder }}
+          builders: "builder-22,buildpacks-20,builder-classic-22"
       - name: Check
         run: git status
         working-directory: ./builder
