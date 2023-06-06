@@ -46,8 +46,9 @@ jobs:
       - name: Package Buildpack
         id: libcnb-package
         working-directory: ${{ matrix.path }}
-        run: cargo libcnb package --release
+        run: echo "dir=$(cargo libcnb package --release)" >> $GITHUB_OUTPUT
       - name: Create Docker Image
+        working-directory: ${{ steps.libcnb-package.outputs.dir }}
         run: pack buildpack package ${{ matrix.id }} --config package.toml -v
       - name: Save Docker Image
         run: docker save ${{ matrix.id }} | zstd -T0 --long=31 -o ${{ matrix.id }}.tar.zst
