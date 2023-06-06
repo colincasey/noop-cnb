@@ -49,12 +49,11 @@ jobs:
         run: echo "package_dir=$(cargo libcnb package --release)" >> $GITHUB_OUTPUT
       - name: Write buildpack metadata
         id: metadata
-        working-directory: ${{ matrix.path }}
         run: |
           export METADATA=./target/buildpack/release/metadata
-          echo "id=$(yj -t < buildpack.toml | jq -r .buildpack.id)" >> $METADATA
-          echo "version=$(yj -t < buildpack.toml | jq -r .buildpack.version)" >> $METADATA
-          echo "repository=$(yj -t < buildpack.toml | jq -r .metadata.release.docker.repository)" >> $METADATA
+          echo "id=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .buildpack.id)" >> $METADATA
+          echo "version=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .buildpack.version)" >> $METADATA
+          echo "repository=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .metadata.release.docker.repository)" >> $METADATA
           echo "path=$(basename ${{ steps.libcnb-package.outputs.package_dir }})" >> $METADATA
           cat $METADATA
       - name: Tar Packaged Buildpack
