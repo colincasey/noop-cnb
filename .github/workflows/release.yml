@@ -127,14 +127,14 @@ jobs:
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.buildpack.outputs.version }}
           release_name: v${{ steps.buildpack.outputs.version }}
           body: |
             See the [CHANGELOG](./CHANGELOG.md) for details.
+          files: ${{ matrix.id }}.cnb
+          fail_on_unmatched_files: true
           draft: true
 
   publish-cnb:
