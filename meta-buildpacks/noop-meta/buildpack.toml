@@ -2,7 +2,7 @@ api = "0.8"
 
 [buildpack]
 id = "noop-meta"
-version = "0.0.0"
+version = "0.0.1"
 name = "Noop Meta Buildpack"
 description = "A meta buildpack that does nothing"
 
