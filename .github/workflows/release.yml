@@ -17,6 +17,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      # This custom action:
+      # - finds all the buildpacks in a repository
+      # - produces a json array of { id, path } entries where
+      #     id = the buildpack id
+      #     path = the directory the buildpack is located
+      #
+      # This can be set in subsequent jobs using `jobs.<job_id>.strategy.matrix.include`
+      # which accepts a list of key/value objects and will create a single job per buildpack.
+      # (https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs#expanding-or-adding-matrix-configurations)
       - name: Generate Buildpack Matrix
         id: generate-buildpack-matrix
         uses: colincasey/languages-github-actions/.github/actions/generate-buildpack-matrix@main
@@ -29,7 +38,6 @@ jobs:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     name: Package / ${{ matrix.id }}
     steps:
-      # Package
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install musl-tools
@@ -53,16 +61,14 @@ jobs:
       - name: Create CNB File
         run: pack buildpack package ${{ matrix.id }}.cnb --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --format file -v
       - name: Create Docker Image
-        working-directory: ${{ steps.libcnb-package.outputs.dir }}
-        run: pack buildpack package ${{ matrix.id }} --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --config package.toml -v
+        run: pack buildpack package ${{ matrix.id }} --config ${{ steps.libcnb-package.outputs.dir }}/package.toml -v
       - name: Save Docker Image
         run: docker save ${{ matrix.id }} | zstd -T0 --long=31 -o ${{ matrix.id }}.tar.zst
       - name: Save Buildpack Variables
         run: |
-          export METADATA=./${{ matrix.id }}.vars
-          echo "version=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .buildpack.version)" >> $METADATA
-          echo "repository=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .metadata.release.docker.repository)" >> $METADATA
-          cat $METADATA
+          echo "version=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .buildpack.version)" >> ./${{ matrix.id }}.vars
+          echo "repository=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .metadata.release.docker.repository)" >> ./${{ matrix.id }}.vars
+          cat ./${{ matrix.id }}.vars
       - name: Cache Outputs
         uses: actions/cache/save@v3
         with:
@@ -125,8 +131,6 @@ jobs:
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
-      - name: Check
-        run: ls -R
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -207,8 +211,12 @@ jobs:
           buildpack-uri: ${{ steps.buildpack.outputs.repository }}@${{ steps.digest.outputs.value }}
           builders: "builder-22,buildpacks-20,builder-classic-22"
 #      - name: Create Pull Request
+#        id: pr
 #        uses: peter-evans/create-pull-request@v5
 #        with:
 #          path: ./builder
 #          delete-branch: true
 #          branch: update/${{ github.repository }}
+      - name: Configure PR
+        if: steps.pr.outputs.pull-request-operation == 'created'
+        run: gh pr merge --auto --squash --repo heroku/builder "${{ steps.pr.outputs.pull-request-number }}"
