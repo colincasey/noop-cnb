@@ -13,11 +13,11 @@ type = "BSD-3-Clause"
 
 [[order.group]]
 id = "noop-a"
-version = "0.0.0"
+version = "0.0.1"
 
 [[order.group]]
 id = "noop-b"
-version = "0.0.0"
+version = "0.0.1"
 
 [metadata]
 [metadata.release]
