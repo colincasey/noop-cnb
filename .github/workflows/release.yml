@@ -125,6 +125,8 @@ jobs:
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
       - name: Create GitHub Release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.buildpack.outputs.version }}
           release_name: v${{ steps.buildpack.outputs.version }}
