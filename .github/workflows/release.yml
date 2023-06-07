@@ -51,8 +51,11 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: echo "dir=$(cargo libcnb package --release)" >> $GITHUB_OUTPUT
       - name: Create CNB File
-        working-directory: ${{ steps.libcnb-package.outputs.dir }}
         run: pack buildpack package ${{ matrix.id }}.cnb --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --format file -v
+      - name: Check
+        run: |
+          ls 
+          ls ${{ steps.libcnb-package.outputs.dir }}
       - name: Create Docker Image
         working-directory: ${{ steps.libcnb-package.outputs.dir }}
         run: pack buildpack package ${{ matrix.id }} --config ${{ steps.libcnb-package.outputs.dir }}/package.toml --config package.toml -v
