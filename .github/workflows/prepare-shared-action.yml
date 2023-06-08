@@ -24,7 +24,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Prepare
+      - name: Generate Changelog
+        id: generate-changelog
+        uses: colincasey/languages-github-actions/.github/actions/generate-changelog@main
+        with:
+          unreleased: true
+      - name: Bump Versions and Update Changelogs
         id: prepare
         uses: colincasey/languages-github-actions/.github/actions/prepare-release@main
         with:
@@ -42,7 +47,7 @@ jobs:
           title: Prepare release v${{ steps.prepare.outputs.to_version }}
           commit-message: Prepare release v${{ steps.prepare.outputs.to_version }}
           branch: release/v${{ steps.prepare.outputs.to_version }}
-          body: ${{ steps.prepare.outputs.changelog_summary }}
+          body: ${{ steps.generate-changelog.outputs.changelog }}
           labels: "automation"
       - name: Configure PR
         if: steps.pr.outputs.pull-request-operation == 'created'
