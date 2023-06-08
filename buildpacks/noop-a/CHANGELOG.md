@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.0.4] 2023/06/08
+
+- No Changes
+
 ## [0.0.3] 2023/06/08
 
 - No Changes
