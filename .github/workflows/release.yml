@@ -105,7 +105,8 @@ jobs:
 #          password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Check version is unique on Docker Hub
         id: check
-        run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+        #run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+        run: echo "published_to_docker=true"
       - name: Tag and publish buildpack
         if: steps.check.outputs.published_to_docker == 'false'
         run: |
