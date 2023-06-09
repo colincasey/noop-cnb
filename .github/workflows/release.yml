@@ -95,20 +95,23 @@ jobs:
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
-      - name: Check version is unique on Docker Hub
-        run: |
-          if docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" > /dev/null; then
-            echo "Duplicate version found on Docker Hub ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}"
-            exit 1
-          fi
       - name: Load Docker images into the Docker daemon
         run: zstd -dc --long=31 ${{ matrix.id }}.tar.zst | docker load
-#      - name: Log into Docker Hub
-#        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USER }} --password-stdin
-#      - name: Tag buildpack and push to registries
-#        run: |
-#          docker tag ${{ matrix.id }} ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}
-#          docker push ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          registry: docker.io
+#          username: ${{ secrets.DOCKER_HUB_USER }}
+#          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Check version is unique on Docker Hub
+        id: check
+        run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+      - name: Tag and publish buildpack
+        if: steps.check.outputs.published_to_docker == 'false'
+        run: |
+          echo "TODO: Echoing these commands until we're sure these steps work"
+          echo "docker tag ${{ matrix.id }} ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}"
+          echo "docker push ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}"
 
   publish-github:
     name: Publish / GitHub / ${{ matrix.id }}
