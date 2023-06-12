@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.0.6] 2023/06/12
+
+- Upgraded `noop-a` to `0.0.6`
+- Upgraded `noop-b` to `0.0.6`
+
 ## [0.0.5] 2023/06/09
 
 - Upgraded `noop-a` to `0.0.5`
