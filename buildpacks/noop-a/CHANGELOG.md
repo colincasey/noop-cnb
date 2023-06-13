@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.0.7] 2023/06/13
+
 - Some change to noop-a
 - Some other change to noop-a
 
