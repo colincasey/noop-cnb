@@ -32,6 +32,7 @@ jobs:
     needs: [detect]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     name: Package / ${{ matrix.id }}
@@ -81,10 +82,11 @@ jobs:
     needs: [ detect, package ]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
-      - name: Restore Docker images from the cache
+      - name: Restore cached assets
         uses: actions/cache/restore@v3
         with:
           key: ${{ github.run_id }}-${{ matrix.id }}
@@ -105,8 +107,7 @@ jobs:
 #          password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Check version is unique on Docker Hub
         id: check
-        #run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-        run: echo "published_to_docker=true"
+        run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
       - name: Tag and publish buildpack
         if: steps.check.outputs.published_to_docker == 'false'
         run: |
@@ -119,10 +120,11 @@ jobs:
     needs: [ detect, package ]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
-      - name: Restore Docker images from the cache
+      - name: Restore cached assets
         uses: actions/cache/restore@v3
         with:
           key: ${{ github.run_id }}-${{ matrix.id }}
@@ -148,12 +150,13 @@ jobs:
     needs: [ detect, publish-docker ]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
       - name: Install crane
         uses: buildpacks/github-actions/setup-tools@v5.2.0
-      - name: Restore Docker images from the cache
+      - name: Restore cached assets
         uses: actions/cache/restore@v3
         with:
           key: ${{ github.run_id }}-${{ matrix.id }}
@@ -180,12 +183,13 @@ jobs:
     needs: [ detect, publish-docker ]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.detect.outputs.buildpacks) }}
     steps:
       - name: Install crane
         uses: buildpacks/github-actions/setup-tools@v5.2.0
-      - name: Restore Docker images from the cache
+      - name: Restore cached assets
         uses: actions/cache/restore@v3
         with:
           key: ${{ github.run_id }}-${{ matrix.id }}
