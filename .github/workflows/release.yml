@@ -68,6 +68,16 @@ jobs:
           echo "version=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .buildpack.version)" >> ./${{ matrix.id }}.vars
           echo "repository=$(yj -t < ${{ matrix.path }}/buildpack.toml | jq -r .metadata.release.docker.repository)" >> ./${{ matrix.id }}.vars
           cat ./${{ matrix.id }}.vars
+      - name: Load Buildpack Variables
+        id: buildpack
+        run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
+      - name: Generate Changelog
+        id: generate-changelog
+        uses: colincasey/languages-github-actions/.github/actions/generate-changelog@main
+        with:
+          version: ${{ steps.buildpack.outputs.version }}
+      - name: Save Changelog
+        run: echo "${{ steps.generate-changelog.outputs.changelog }}" >> ./${{ matrix.id }}.changes
       - name: Cache Outputs
         uses: actions/cache/save@v3
         with:
@@ -76,6 +86,7 @@ jobs:
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
+            ${{ matrix.id }}.changes
 
   publish-docker:
     name: Publish / Docker / ${{ matrix.id }}
@@ -94,6 +105,7 @@ jobs:
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
+            ${{ matrix.id }}.changes
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
@@ -132,6 +144,7 @@ jobs:
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
+            ${{ matrix.id }}.changes
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
@@ -139,11 +152,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.buildpack.outputs.version }}
-          body: |
-            See the [CHANGELOG](./CHANGELOG.md) for details.
+          body_path: ${{ matrix.id }}.changes
           files: ${{ matrix.id }}.cnb
           fail_on_unmatched_files: true
-          draft: true
 
   publish-cnb:
     name: Publish / CNB Registry / ${{ matrix.id }}
@@ -164,6 +175,7 @@ jobs:
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
+            ${{ matrix.id }}.changes
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
@@ -180,7 +192,7 @@ jobs:
 
   update-builder:
     name: Update Builder / ${{ matrix.id }}
-    needs: [ detect, publish-docker ]
+    needs: [ detect, publish-docker, publish-cnb, publish-github ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -197,6 +209,7 @@ jobs:
             ${{ matrix.id }}.cnb
             ${{ matrix.id }}.tar.zst
             ${{ matrix.id }}.vars
+            ${{ matrix.id }}.changes
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
@@ -222,7 +235,8 @@ jobs:
 #        with:
 #          path: ./builder
 #          delete-branch: true
-#          branch: update/${{ github.repository }}
+#          branch: update/${{ github.repository }}/${{ steps.buildpack.outputs.version }}
+#          body-path: ../${{ matrix.id }}.changes
 #      - name: Configure PR
 #        if: steps.pr.outputs.pull-request-operation == 'created'
 #        run: gh pr merge --auto --squash --repo heroku/builder "${{ steps.pr.outputs.pull-request-number }}"
