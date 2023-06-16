@@ -24,16 +24,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Generate Changelog
-        id: generate-changelog
-        uses: colincasey/languages-github-actions/.github/actions/generate-changelog@main
-        with:
-          unreleased: true
       - name: Bump Versions and Update Changelogs
         id: prepare
         uses: colincasey/languages-github-actions/.github/actions/prepare-release@main
         with:
           bump: ${{ inputs.bump }}
+      - name: Generate Changelog
+        id: generate-changelog
+        uses: colincasey/languages-github-actions/.github/actions/generate-changelog@main
+        with:
+          version: ${{ steps.prepare.outputs.to_version }}
       - uses: tibdex/github-app-token@v1
         id: generate-token
         with:
