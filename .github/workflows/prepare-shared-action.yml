@@ -46,7 +46,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           title: Prepare release v${{ steps.prepare.outputs.to_version }}
           commit-message: Prepare release v${{ steps.prepare.outputs.to_version }}
-          branch: release/v${{ steps.prepare.outputs.to_version }}
+          branch: prepare/v${{ steps.prepare.outputs.to_version }}
           body: ${{ steps.generate-changelog.outputs.changelog }}
           labels: "automation"
       - name: Configure PR
