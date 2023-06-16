@@ -225,9 +225,9 @@ jobs:
         uses: colincasey/languages-github-actions/.github/actions/update-builder@main
         with:
           path: ./builder
-          buildpack-id: ${{ matrix.id }}
-          buildpack-version: ${{ steps.buildpack.outputs.version }}
-          buildpack-uri: ${{ steps.buildpack.outputs.repository }}@${{ steps.digest.outputs.value }}
+          buildpack_id: ${{ matrix.id }}
+          buildpack_version: ${{ steps.buildpack.outputs.version }}
+          buildpack_uri: ${{ steps.buildpack.outputs.repository }}@${{ steps.digest.outputs.value }}
           builders: "builder-22,buildpacks-20,builder-classic-22"
 #      - name: Create Pull Request
 #        id: pr
