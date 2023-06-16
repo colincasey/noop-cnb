@@ -77,7 +77,9 @@ jobs:
         with:
           version: ${{ steps.buildpack.outputs.version }}
       - name: Save Changelog
-        run: echo "${{ steps.generate-changelog.outputs.changelog }}" >> ./${{ matrix.id }}.changes
+        run: |
+          echo "${{ steps.generate-changelog.outputs.changelog }}"
+          echo "${{ steps.generate-changelog.outputs.changelog }}" >> ./${{ matrix.id }}.changes
       - name: Cache Outputs
         uses: actions/cache/save@v3
         with:
@@ -117,7 +119,7 @@ jobs:
 #          registry: docker.io
 #          username: ${{ secrets.DOCKER_HUB_USER }}
 #          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Check version is unique on Docker Hub
+      - name: Check if version is already on Docker Hub
         id: check
         run: echo "published_to_docker=$(docker manifest inspect "${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }}" &> /dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
       - name: Tag and publish buildpack
@@ -181,7 +183,7 @@ jobs:
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
-      - name: Check version is unique on Docker Hub
+      - name: Check if version is already in the registry
         id: check
         run: |
           export URL="https://registry.buildpacks.io/api/v1/buildpacks/${{ matrix.id }}/${{ steps.buildpack.outputs.version }}"
