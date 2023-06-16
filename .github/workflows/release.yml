@@ -181,10 +181,17 @@ jobs:
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
+      - name: Check version is unique on Docker Hub
+        id: check
+        run: |
+          export URL="https://registry.buildpacks.io/api/v1/buildpacks/${{ matrix.id }}/${{ steps.buildpack.outputs.version }}"
+          export EXISTS=$(if [ "$( curl -s -o /dev/null -I -w "%{http_code}" "${URL}")" = "200" ]; then echo 'true'; else echo 'false'; fi)
+          echo "published_to_cnb_registry=${EXISTS}" >> $GITHUB_OUTPUT
 #      - name: Calculate the buildpack image digest
 #        id: digest
 #        run: echo "value=$(crane digest ${{ steps.buildpack.outputs.repository }}:${{ steps.buildpack.outputs.version }})" >> "$GITHUB_OUTPUT"
 #      - name: Register the new version with the CNB Buildpack Registry
+#        if: steps.check.outputs.published_to_cnb_registry == 'false'
 #        uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.0.1
 #        with:
 #          token: ${{ secrets.CNB_REGISTRY_RELEASE_BOT_GITHUB_TOKEN }}
