@@ -78,8 +78,10 @@ jobs:
           version: ${{ steps.buildpack.outputs.version }}
       - name: Save Changelog
         run: |
-          printf "${{ steps.generate-changelog.outputs.changelog }}"
-          printf "${{ steps.generate-changelog.outputs.changelog }}" >> ./${{ matrix.id }}.changes
+          cat << "EOF" > ./${{ matrix.id }}.changes
+          ${{ steps.generate-changelog.outputs.changelog }}
+          EOF
+          cat ./${{ matrix.id }}.changes
       - name: Cache Outputs
         uses: actions/cache/save@v3
         with:
