@@ -148,6 +148,8 @@ jobs:
       - name: Load Buildpack Variables
         id: buildpack
         run: cat ${{ matrix.id }}.vars >> $GITHUB_OUTPUT
+      - name: Test Changelog
+        run: cat ${{ matrix.id }}.changes
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
