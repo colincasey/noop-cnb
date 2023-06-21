@@ -12,7 +12,7 @@ jobs:
     uses: colincasey/languages-github-actions/.github/workflows/_buildpacks-release-detect.yml@main
 
   package:
-    name: Package
+    name: Package / ${{ matrix.id }}
     needs: [ detect ]
     strategy:
       fail-fast: true
@@ -24,7 +24,7 @@ jobs:
       buildpack_path: ${{ matrix.path }}
 
   publish-docker:
-    name: Publish / Docker
+    name: ${{ matrix.id }}
     needs: [ detect, package ]
     strategy:
       fail-fast: false
@@ -49,7 +49,7 @@ jobs:
       buildpack_id: ${{ matrix.id }}
 
   publish-cnb:
-    name: Publish / CNB Registry / ${{ matrix.id }}
+    name: ${{ matrix.id }}
     needs: [ detect, publish-docker ]
     strategy:
       fail-fast: false
