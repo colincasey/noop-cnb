@@ -15,15 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # This generate-buildpack-matrix action:
-      # - finds all the buildpacks in a repository
-      # - produces a json array of { id, path } entries where
-      #     id = the buildpack id
-      #     path = the directory the buildpack is located
-      #
-      # This can be set in subsequent jobs using `jobs.<job_id>.strategy.matrix.include`
-      # which accepts a list of key/value objects and will create a single job per buildpack.
-      # (https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs#expanding-or-adding-matrix-configurations)
       - name: Generate Buildpack Matrix
         id: generate-buildpack-matrix
         uses: colincasey/languages-github-actions/.github/actions/generate-buildpack-matrix@main
