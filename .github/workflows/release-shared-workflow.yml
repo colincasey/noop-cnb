@@ -12,7 +12,7 @@ jobs:
     uses: colincasey/languages-github-actions/.github/workflows/_buildpacks-release-detect.yml@main
 
   package:
-    name: Package / ${{ matrix.id }}
+    name: Package ${{ matrix.id }}
     needs: [ detect ]
     strategy:
       fail-fast: true
