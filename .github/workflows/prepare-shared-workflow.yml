@@ -20,7 +20,6 @@ permissions:
 jobs:
   prepare-release:
     uses: colincasey/languages-github-actions/.github/workflows/cnb-prepare-release.yml@main
-    secrets: inherit
     with:
       bump: ${{ inputs.bump }}
       app_id: ${{ secrets.APP_ID }}
