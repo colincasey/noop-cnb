@@ -22,5 +22,6 @@ jobs:
     uses: colincasey/languages-github-actions/.github/workflows/cnb-prepare-release.yml@main
     with:
       bump: ${{ inputs.bump }}
+    secrets:
       app_id: ${{ secrets.APP_ID }}
       app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
