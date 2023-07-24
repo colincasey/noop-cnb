@@ -6,6 +6,9 @@ on:
 env:
   dry_run: true
 
+permissions:
+  contents: write
+
 jobs:
   detect:
     name: Detecting Buildpacks
