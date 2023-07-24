@@ -81,5 +81,6 @@ jobs:
     with:
       app_id: ${{ vars.LINGUIST_GH_APP_ID }}
       buildpack_version: ${{ needs.detect.outputs.version }}
+      dry_run: true
     secrets:
       app_private_key: ${{ secrets.LINGUIST_GH_PRIVATE_KEY }}
