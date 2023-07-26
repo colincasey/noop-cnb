@@ -15,6 +15,8 @@ jobs:
     uses: colincasey/languages-github-actions/.github/workflows/_buildpacks-release.yml@main
     with:
       app_id: ${{ vars.LINGUIST_GH_APP_ID }}
+      dry_run: true
+      ip_allowlisted_image: ubuntu-latest
     secrets:
       app_private_key: ${{ secrets.LINGUIST_GH_PRIVATE_KEY }}
       cnb_registry_token: ${{ secrets.CNB_REGISTRY_RELEASE_BOT_GITHUB_TOKEN }}
