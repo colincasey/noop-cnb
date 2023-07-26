@@ -35,7 +35,7 @@ jobs:
 
   update-builder:
     name: Update Builder
-    needs: [detect, publish-all]
+    needs: [detect, publish]
     uses: colincasey/languages-github-actions/.github/workflows/_buildpacks-release-update-builder.yml@main
     with:
       app_id: ${{ vars.LINGUIST_GH_APP_ID }}
