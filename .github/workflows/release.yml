@@ -1,4 +1,4 @@
-name: Release Buildpacks (shortest)
+name: Release Buildpacks
 
 on:
   workflow_dispatch:
