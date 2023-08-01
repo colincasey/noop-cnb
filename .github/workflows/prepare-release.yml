@@ -19,5 +19,6 @@ jobs:
     with:
       bump: ${{ inputs.bump }}
       app_id: ${{ vars.LINGUIST_GH_APP_ID }}
+      ip_allowlisted_runner: ubuntu-latest
     secrets:
       app_private_key: ${{ secrets.LINGUIST_GH_PRIVATE_KEY }}
