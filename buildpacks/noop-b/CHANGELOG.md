@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2023-08-03
+
+- No changes.
+
 ## [0.1.0] - 2023-06-16
 
 - No changes
@@ -39,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - No Changes
 
-[unreleased]: https://github.com/colincasey/noop-cnb/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/colincasey/noop-cnb/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/colincasey/noop-cnb/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/colincasey/noop-cnb/compare/v0.0.7...v0.1.0
 [0.0.7]: https://github.com/colincasey/noop-cnb/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/colincasey/noop-cnb/compare/v0.0.5...v0.0.6
