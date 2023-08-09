@@ -2,7 +2,7 @@ api = "0.8"
 
 [buildpack]
 id = "colincasey/noop-meta"
-version = "0.1.0"
+version = "0.1.1"
 name = "Noop Meta Buildpack"
 description = "A meta buildpack that does nothing"
 
@@ -13,11 +13,11 @@ type = "BSD-3-Clause"
 
 [[order.group]]
 id = "noop-a"
-version = "0.1.0"
+version = "0.1.1"
 
 [[order.group]]
 id = "noop-b"
-version = "0.1.0"
+version = "0.1.1"
 
 [metadata]
 [metadata.release]
