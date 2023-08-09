@@ -11,5 +11,5 @@ id = "some-target-stack"
 
 [metadata]
 [metadata.release]
-[metadata.release.docker]
+[metadata.release.image]
 repository = "docker.io/noop/noop-a"
