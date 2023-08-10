@@ -1,13 +1,13 @@
 api = "0.8"
 
 [buildpack]
-id = "noop-b"
+id = "org/noop-b"
 version = "0.1.0"
 name = "(b) - Noop Buildpack"
 description = "(b) - A buildpack that does nothing"
 
 [[stacks]]
-id = "some-target-stack"
+id = "*"
 
 [metadata]
 [metadata.release]

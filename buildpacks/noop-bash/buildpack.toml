@@ -1,0 +1,15 @@
+api = "0.8"
+
+[buildpack]
+id = "org/noop-bash"
+version = "0.1.0"
+name = "(c) - Noop Bash Buildpack"
+description = "(c) - A buildpack that does nothing"
+
+[[stacks]]
+id = "*"
+
+[metadata]
+[metadata.release]
+[metadata.release.image]
+repository = "docker.io/noop/noop-bash"

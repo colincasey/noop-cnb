@@ -2,8 +2,10 @@
 uri = "."
 
 [[dependencies]]
-uri = "libcnb:noop-a"
+uri = "libcnb:org/noop-a"
 
 [[dependencies]]
-uri = "libcnb:noop-b"
+uri = "libcnb:org/noop-b"
 
+[[dependencies]]
+uri = "../../buildpacks/noop-bash"
