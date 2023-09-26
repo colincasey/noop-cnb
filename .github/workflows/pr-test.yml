@@ -3,6 +3,7 @@ name: PR Trigger Test
 on:
   pull_request:
     branches:
+      - main
       - prepare-release
     types:
       - closed
