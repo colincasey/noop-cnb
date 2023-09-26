@@ -1,0 +1,20 @@
+name: PR Trigger Test
+
+on:
+  pull_request:
+    branches:
+      - prepare-release
+    types:
+      - closed
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+        run: |
+          echo "HEAD REF:  ${{ github.head_ref }}"
+          echo "PR TITLE:  ${{ github.event.pull_request.title }}"
+          echo "PR MERGED: ${{ github.event.pull_request.merged }}"
+          echo "---"
+          echo "${{ github.event.pull_request }}"
