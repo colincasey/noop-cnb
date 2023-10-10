@@ -19,4 +19,6 @@ jobs:
           echo "PR TITLE:  ${{ github.event.pull_request.title }}"
           echo "PR MERGED: ${{ github.event.pull_request.merged }}"
           echo "---"
+          echo "${{ toJSON(github.event) }}"
+          echo "---"
           echo "${{ toJSON(github.event.pull_request) }}"
