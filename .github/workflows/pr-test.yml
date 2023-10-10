@@ -19,5 +19,7 @@ jobs:
           echo "PR TITLE:  ${{ github.event.pull_request.title }}"
           echo "PR MERGED: ${{ github.event.pull_request.merged }}"
       - name: talkback
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "Released the buildpack!"
