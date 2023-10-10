@@ -1,6 +1,7 @@
 name: PR Trigger Test
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
@@ -18,4 +19,4 @@ jobs:
           echo "PR TITLE:  ${{ github.event.pull_request.title }}"
           echo "PR MERGED: ${{ github.event.pull_request.merged }}"
           echo "---"
-          echo "${{ github.event.pull_request }}"
+          echo "${{ toJSON(github.event.pull_request) }}"
