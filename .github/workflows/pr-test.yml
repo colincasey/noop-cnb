@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - main
       - prepare-release
     types:
       - closed
 
 jobs:
   info:
+    if: (github.event.pull_request && github.event.pull_request.merged) || true
     runs-on: ubuntu-latest
     steps:
       - name: print
@@ -18,7 +18,5 @@ jobs:
           echo "HEAD REF:  ${{ github.head_ref }}"
           echo "PR TITLE:  ${{ github.event.pull_request.title }}"
           echo "PR MERGED: ${{ github.event.pull_request.merged }}"
-          echo "---"
-          echo "${{ toJSON(github.event) }}"
           echo "---"
           echo "${{ toJSON(github.event.pull_request) }}"
