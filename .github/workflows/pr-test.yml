@@ -8,6 +8,9 @@ on:
     types:
       - closed
 
+permissions:
+  pull-requests: write
+
 jobs:
   info:
     if: (github.event.pull_request && github.event.pull_request.merged) || true
