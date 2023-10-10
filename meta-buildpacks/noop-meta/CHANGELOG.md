@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2023-10-10
+
+### Changed
+
+- Updated `org/noop-a` to `0.1.6`.
+- Updated `org/noop-b` to `0.1.6`.
+- Updated `org/noop-bash` to `0.1.6`.
+
 ## [0.1.5] - 2023-10-10
 
 ### Changed
@@ -79,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - No Changes
 
-[unreleased]: https://github.com/colincasey/noop-cnb/compare/v0.1.5...HEAD
+[unreleased]: https://github.com/colincasey/noop-cnb/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/colincasey/noop-cnb/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/colincasey/noop-cnb/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/colincasey/noop-cnb/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/colincasey/noop-cnb/compare/v0.1.2...v0.1.3
