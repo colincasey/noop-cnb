@@ -2,7 +2,7 @@ api = "0.8"
 
 [buildpack]
 id = "org/noop-b"
-version = "0.1.3"
+version = "0.1.4"
 name = "(b) - Noop Buildpack"
 description = "(b) - A buildpack that does nothing"
 
