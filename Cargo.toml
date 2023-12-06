@@ -4,6 +4,7 @@ members = [
     "buildpacks/noop-b",
     "buildpacks/noop-multi-arch"
 ]
+resolver = "2"
 
 [workspace.package]
 version = "0.0.1"
