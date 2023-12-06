@@ -1,5 +1,5 @@
 [package]
-name = "noop-a"
+name = "noop-multi-arch"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

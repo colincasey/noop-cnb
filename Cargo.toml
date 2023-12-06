@@ -1,7 +1,8 @@
 [workspace]
 members = [
     "buildpacks/noop-a",
-    "buildpacks/noop-b"
+    "buildpacks/noop-b",
+    "buildpacks/noop-multi-arch"
 ]
 
 [workspace.package]

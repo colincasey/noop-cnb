@@ -1,10 +1,10 @@
 api = "0.8"
 
 [buildpack]
-id = "org/noop-a"
+id = "org/noop-multi-arch"
 version = "0.1.8"
-name = "(a) - Noop Buildpack"
-description = "(a) - A buildpack that does nothing"
+name = "(multi-arch) - Noop Buildpack"
+description = "(multi-arch) - A buildpack that does nothing"
 
 [[stacks]]
 id = "some-target-stack"
@@ -12,7 +12,7 @@ id = "some-target-stack"
 [metadata]
 [metadata.release]
 [metadata.release.image]
-repository = "docker.io/noop/noop-a"
+repository = "docker.io/noop/noop-multi-arch"
 
 [[metadata.targets]]
 os = "linux"
