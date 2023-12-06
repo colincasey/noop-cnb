@@ -14,10 +14,10 @@ id = "some-target-stack"
 [metadata.release.image]
 repository = "docker.io/noop/noop-a"
 
-[[targets]]
+[[metadata.targets]]
 os = "linux"
 arch = "amd64"
 
-[[targets]]
+[[metadata.targets]]
 os = "linux"
 arch = "arm64"
